@@ -1,0 +1,72 @@
+---
+- hosts: 128.135.158.199
+
+  vars:
+    request_name: 'lincolnb-analysis-13'
+    cvmfs_quota_limit: 20000
+    cvmfs_http_proxy: 'http://squid.grid.uchicago.edu:3128'
+
+  become: true
+
+  tasks:
+    - name: Set hostname
+      hostname:
+        name: "{{ request_name }}.virtualclusters.org"
+
+    - name: Install EPEL
+      yum:
+        name: epel-release
+        state: latest
+    - name: Install OSG repos
+      yum:
+        name: http://mirror.grid.uchicago.edu/pub/osg/3.4/el7/release/x86_64/osg-release-3.4-2.osg34.el7.noarch.rpm
+        state: latest
+
+    - name: Install HTCondor
+      yum:
+        name: condor
+        state: latest
+      notify: restart htcondor
+
+    - name: Install CVMFS
+      yum:
+        name: osg-oasis
+        state: latest
+    - name: Add auto.cvmfs
+      lineinfile:
+        path: /etc/auto.master
+        regexp: '^\/cvmfs'
+        line: '/cvmfs /etc/auto.cvmfs'
+      notify: restart autofs
+    - name: Copy CVMFS config
+      copy:
+        src: files/cvmfs_default.local
+        dest: /etc/cvmfs/default.local
+        owner: root
+        group: root
+        mode: 0644
+
+    - name: Add VC3 users
+      user:
+        name: lincolnb
+        comment: "Lincoln Bryant"
+        uid: 1001
+    - name: Add VC3 user keys
+      authorized_key:
+        user: lincolnb
+        state: present
+        key: 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDEJr54+l4rAvIWDbKoUufD1KM1tY2mrsAdzdgEfKv18ThHSwXIsDegATH81/m+6InkZ0/ObUwD0fA3O9x2VD4ZHmFcsoK3vlO4voh7ZSmE3KfzO3IDPnCxaWHE6iPUdDyM4xi/tKWGauH6hT+a6tmp0+52J1k+XtBFwwWcn4ssVgf+xJpcr9iX+2qOSCH01bv4ap4huFZDFfWSdZhe5q3qtU9kHJZXkz2v/Iue2KDMMT8H6PT6lcdccoAwOQ9DHHxXijBwsdi84YAgdUb/OAwViREIR8By8Na49creXZQ1JuhCQhBk3XCLULc7Kka08gxn5Qew3mrrTRcUVjEMWxMP lincolnb@wireless-s1-so-150-55-40.uchicago.edu'
+
+    - name: Add MOTD template
+      template:
+        src: templates/motd.j2
+        dest: /etc/motd
+        owner: root
+        group: root
+        mode: 0644
+
+  handlers:
+  - name: restart htcondor
+    service: name=condor state=restarted
+  - name: restart autofs
+    service: name=autofs state=restarted
