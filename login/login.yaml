@@ -39,8 +39,8 @@
         line: '/cvmfs /etc/auto.cvmfs'
       notify: restart autofs
     - name: Copy CVMFS config
-      copy:
-        src: files/cvmfs_default.local
+      template:
+        src: files/cvmfs_default_local.j2
         dest: /etc/cvmfs/default.local
         owner: root
         group: root
