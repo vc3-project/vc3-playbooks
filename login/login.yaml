@@ -1,12 +1,14 @@
 ---
-- hosts: 128.135.158.199
+- hosts: all
+  remote_user: cloud-user
+  become: yes
+  become_user: root
 
   vars:
-    request_name: 'lincolnb-analysis-13'
+
+    #request_name: 'somename'  ----> CALL AS: ansible-playbook --extra-vars 'request_name=somename' ....
     cvmfs_quota_limit: 20000
     cvmfs_http_proxy: 'http://squid.grid.uchicago.edu:3128'
-
-  become: true
 
   tasks:
     - name: Set hostname
@@ -22,10 +24,22 @@
         name: http://mirror.grid.uchicago.edu/pub/osg/3.4/el7/release/x86_64/osg-release-3.4-2.osg34.el7.noarch.rpm
         state: latest
 
+    - name: Install Perl
+      yum:
+        name: perl
+        state: latest
+
     - name: Install HTCondor
       yum:
         name: condor
         state: latest
+    - name: Configure HTCondor
+      template:
+        src: templates/condor_config.local.j2
+        dest: /etc/condor/condor_config.local
+        owner: root
+        group: root
+        mode: 0644
       notify: restart htcondor
 
     - name: Install CVMFS
