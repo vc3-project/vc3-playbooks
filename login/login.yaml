@@ -62,15 +62,14 @@
 
     - name: Add VC3 users
       user:
-        name: lincolnb
-        comment: "Lincoln Bryant"
+        name: {{ production_user_name }}
+        comment: {{ production_user_name }}
         uid: 1001
     - name: Add VC3 user keys
       authorized_key:
-        user: lincolnb
+        user: {{ production_user_name }}
         state: present
-        key: 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDEJr54+l4rAvIWDbKoUufD1KM1tY2mrsAdzdgEfKv18ThHSwXIsDegATH81/m+6InkZ0/ObUwD0fA3O9x2VD4ZHmFcsoK3vlO4voh7ZSmE3KfzO3IDPnCxaWHE6iPUdDyM4xi/tKWGauH6hT+a6tmp0+52J1k+XtBFwwWcn4ssVgf+xJpcr9iX+2qOSCH01bv4ap4huFZDFfWSdZhe5q3qtU9kHJZXkz2v/Iue2KDMMT8H6PT6lcdccoAwOQ9DHHxXijBwsdi84YAgdUb/OAwViREIR8By8Na49creXZQ1JuhCQhBk3XCLULc7Kka08gxn5Qew3mrrTRcUVjEMWxMP lincolnb@wireless-s1-so-150-55-40.uchicago.edu'
-
+        key: {{ production_user_public_key }}
     - name: Add MOTD template
       template:
         src: templates/motd.j2
