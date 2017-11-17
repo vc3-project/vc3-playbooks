@@ -33,6 +33,7 @@
       yum:
         name: condor
         state: latest
+
     - name: Configure HTCondor
       template:
         src: templates/condor_config.local.j2
@@ -41,6 +42,9 @@
         group: root
         mode: 0644
       notify: restart htcondor
+
+    - name: create condor password
+        shell: condor_store_cred -c add -p "{{ lookup('password', '/dev/null length=64') }}"
 
     - name: Install CVMFS
       yum:
@@ -81,5 +85,6 @@
   handlers:
   - name: restart htcondor
     service: name=condor state=restarted
+    notify: create condor password
   - name: restart autofs
     service: name=autofs state=restarted
