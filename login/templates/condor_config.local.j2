@@ -1,5 +1,5 @@
-COLLECTOR_NAME = {{ request_name }}_collector
-CONDOR_HOST = {{ inventory_hostname }}
+COLLECTOR_NAME = "{{ request_name }}_collector"
+CONDOR_HOST = "{{ inventory_hostname }}"
 
 ALLOW_ADMINISTRATOR = $(CONDOR_HOST), $(FULL_HOSTNAME), $(IP_ADDRESS)
 
@@ -34,7 +34,7 @@ COLLECTOR_QUERY_WORKERS = 16
 # Improve condor_q performance
 SCHEDD_QUERY_WORKERS = 10
 
-NETWORK_INTERFACE = 192.170.231.29
+NETWORK_INTERFACE = $(CONDOR_HOST)
 
 ALLOW_WRITE = 10.0.0.0/8, 192.170.226.0/23, 192.170.231.0/26
 ALLOW_DAEMON = 10.0.0.0/8, 192.170.226.0/23, 192.170.231.0/26
