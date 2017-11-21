@@ -54,9 +54,6 @@
         dest: "/tmp/condor_password.{{ request_name }}"
         flat: yes
 
-    - name: create condor password
-      shell: condor_store_cred -c add -p "{{ lookup('password', '/dev/null length=64') }}"
-
     - name: Install CVMFS
       yum:
         name: osg-oasis
