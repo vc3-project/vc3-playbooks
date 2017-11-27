@@ -76,7 +76,6 @@
       user:
         name: "{{ production_user_name }}"
         comment: "{{ production_user_name }}"
-        uid: 1001
     - name: Add VC3 user keys
       authorized_key:
         user: "{{ production_user_name }}"
