@@ -51,7 +51,7 @@
     - name: fetch condor password file
       fetch:
         src:  /etc/condor/condor_password
-        dest: "/tmp/condor_password.{{ request_name }}"
+        dest: "{{ condor_password_file }}"
         flat: yes
 
     - name: Install CVMFS
