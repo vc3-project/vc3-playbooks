@@ -83,6 +83,11 @@
         name: gcc-c++
         state: latest
 
+    - name: Install fortran compiler
+      yum:
+        name: gcc-gfortran
+        state: latest
+
     - name: Install vc3-builder
       copy:
         src:  /bin/vc3-builder
