@@ -72,7 +72,27 @@
         group: root
         mode: 0644
 
+    - name: Add VC3 users
+      user:
+        name: "{{ item.key }}"
+        comment: "{{ item.key }}"
+        state: present
+      with_dict: "{{ production_keys }}"
 
+    - name: Add VC3 user keys
+      authorized_key:
+        user: "{{ item.key }}"
+        state: present
+        key: "{{ item.value }}"
+      with_dict: "{{ production_keys }}"
+
+    - name: Add MOTD template
+      template:
+        src: templates/motd.j2
+        dest: /etc/motd
+        owner: root
+        group: root
+        mode: 0644
     - name: Install C compiler
       yum:
         name: gcc
@@ -104,28 +124,6 @@
         dest: /etc/profile.d/vc3-environments.env.sh
         state: link
       when: builder_options is defined 
-
-    - name: Add VC3 users
-      user:
-        name: "{{ item.key }}"
-        comment: "{{ item.key }}"
-        state: present
-      with_dict: "{{ production_keys }}"
-
-    - name: Add VC3 user keys
-      authorized_key:
-        user: "{{ item.key }}"
-        state: present
-        key: "{{ item.value }}"
-      with_dict: "{{ production_keys }}"
-
-    - name: Add MOTD template
-      template:
-        src: templates/motd.j2
-        dest: /etc/motd
-        owner: root
-        group: root
-        mode: 0644
 
   handlers:
   - name: restart htcondor
