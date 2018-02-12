@@ -98,7 +98,7 @@
         src:  /opt/vc3/home/vc3-environments.env
         dest: /etc/profile.d/vc3-environments.env.sh
         state: link
-        when: builder_options is defined 
+      when: builder_options is defined 
 
     - name: Add VC3 users
       user:
