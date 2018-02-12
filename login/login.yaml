@@ -72,6 +72,34 @@
         group: root
         mode: 0644
 
+
+    - name: Install C compiler
+      yum:
+        name: gcc
+        state: latest
+
+    - name: Install C++ compiler
+      yum:
+        name: gcc-c++
+        state: latest
+
+    - name: Install vc3-builder
+      copy:
+        src:  /bin/vc3-builder
+        dest: /bin/vc3-builder
+        mode: 0755
+
+    - name: Install vc3 environments
+      shell: /bin/vc3-builder --sys python:2.7.15=/usr --sys perl:5.16=/usr --install /opt/vc3/root --distfiles /opt/vc3/distfiles --home /opt/vc3/home  --env-to /opt/vc3/home/vc3-environments "{{ builder_options }}"
+      when: builder_options is defined 
+
+    - name: Install vc3 profile
+      file:
+        src:  /opt/vc3/home/vc3-environments.env
+        dest: /etc/profile.d/vc3-environments.env.sh
+        state: link
+        when: builder_options is defined 
+
     - name: Add VC3 users
       user:
         name: "{{ item.key }}"
