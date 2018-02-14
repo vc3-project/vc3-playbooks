@@ -58,12 +58,14 @@
       yum:
         name: osg-oasis
         state: latest
+
     - name: Add auto.cvmfs
       lineinfile:
         path: /etc/auto.master
         regexp: '^\/cvmfs'
         line: '/cvmfs /etc/auto.cvmfs'
       notify: restart autofs
+
     - name: Copy CVMFS config
       template:
         src: templates/cvmfs_default_local.j2
@@ -71,6 +73,7 @@
         owner: root
         group: root
         mode: 0644
+    - meta: flush_handlers
 
     - name: Add VC3 users
       user:
@@ -93,6 +96,7 @@
         owner: root
         group: root
         mode: 0644
+
     - name: Install C compiler
       yum:
         name: gcc
