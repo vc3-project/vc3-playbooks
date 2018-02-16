@@ -29,6 +29,11 @@
         name: perl
         state: latest
 
+    - name: Install Perl CPAN
+      yum:
+        name: perl-CPAN
+        state: latest
+
     - name: Install HTCondor
       yum:
         name: condor
