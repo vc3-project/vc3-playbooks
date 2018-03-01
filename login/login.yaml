@@ -15,6 +15,30 @@
       hostname:
         name: "{{ request_name }}.virtualclusters.org"
 
+    - name: Install EPEL
+      yum:
+        name: epel-release
+        state: latest
+    - name: Install OSG repos
+      yum:
+        name: http://mirror.grid.uchicago.edu/pub/osg/3.4/el7/release/x86_64/osg-release-3.4-2.osg34.el7.noarch.rpm
+        state: latest
+
+    - name: Install Perl
+      yum:
+        name: perl
+        state: latest
+
+    - name: Install Perl sane
+      yum:
+        name: perl-core
+        state: latest
+
+    - name: Install HTCondor
+      yum:
+        name: condor
+        state: latest
+
     - name: Configure HTCondor
       template:
         src: templates/condor_config.local.j2
@@ -34,6 +58,11 @@
         src:  /etc/condor/condor_password
         dest: "{{ condor_password_file }}"
         flat: yes
+
+    - name: Install CVMFS
+      yum:
+        name: osg-oasis
+        state: latest
 
     - name: Add auto.cvmfs
       lineinfile:
@@ -73,6 +102,21 @@
         group: root
         mode: 0644
 
+    - name: Install C compiler
+      yum:
+        name: gcc
+        state: latest
+
+    - name: Install C++ compiler
+      yum:
+        name: gcc-c++
+        state: latest
+
+    - name: Install fortran compiler
+      yum:
+        name: gcc-gfortran
+        state: latest
+
     - name: Install vc3-builder
       copy:
         src:  /bin/vc3-builder
@@ -102,4 +146,3 @@
     service: name=condor state=restarted
   - name: restart autofs
     service: name=autofs state=restarted
-
