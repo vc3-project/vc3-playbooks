@@ -83,6 +83,12 @@
       shell: /bin/vc3-builder --var TERM=linux --sys python:2.7.15=/usr --sys perl:5.16=/usr --install /opt/vc3/root --distfiles /opt/vc3/distfiles --home /opt/vc3/home  --env-to /opt/vc3/home/vc3-environments {{ builder_options }}
       when: builder_options is defined 
 
+    - name: Set vc3 python paths
+      linefile:
+        path: /usr/lib/python2.7/site-packages/vc3.pth
+        line: /opt/vc3/home/.local/lib/python2.7/site-packages 
+      when: builder_options is defined 
+
     - name: Install vc3 profile
       file:
         src:  /opt/vc3/home/vc3-environments.env
