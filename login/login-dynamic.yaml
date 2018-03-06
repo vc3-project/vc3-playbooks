@@ -87,6 +87,7 @@
       lineinfile:
         path: /usr/lib/python2.7/site-packages/vc3.pth
         line: /opt/vc3/home/.local/lib/python2.7/site-packages 
+        create: yes
       when: builder_options is defined 
 
     - name: Install vc3 profile
