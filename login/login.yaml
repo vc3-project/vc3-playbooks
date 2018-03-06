@@ -128,7 +128,7 @@
       when: builder_options is defined 
 
     - name: Set vc3 python paths
-      linefile:
+      lineinfile:
         path: /usr/lib/python2.7/site-packages/vc3.pth
         line: /opt/vc3/home/.local/lib/python2.7/site-packages 
       when: builder_options is defined 
