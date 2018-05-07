@@ -33,6 +33,7 @@ Prefix: %{_prefix}
 %install
 mkdir -p %{buildroot}/%{_sysconfdir}/vc3/vc3-playbooks
 cp -r * %{buildroot}/%{_sysconfdir}/vc3/vc3-playbooks
+rm -f %{buildroot}/%{_sysconfdir}/vc3/vc3-playbooks/vc3-playbooks.spec
 
 %files
 %{_sysconfdir}/vc3/vc3-playbooks/login/login-dynamic.yaml
