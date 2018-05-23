@@ -73,12 +73,6 @@
         group: root
         mode: 0644
 
-    - name: Install tclsh compiler
-      yum:
-        name: tclsh
-        state: latest
-
-
     - name: Install vc3-builder
       copy:
         src:  /bin/vc3-builder
