@@ -36,11 +36,13 @@ SCHEDD_QUERY_WORKERS = 10
 
 NETWORK_INTERFACE = $(CONDOR_HOST)
 
+VC3_FACTORIES = apf.virtualclusters.org, apf-test.virtualclusters.org, apf-prod.virtualclusters.org
+
 ALLOW_ADMINISTRATOR = $(FLOCK_FROM), $(CONDOR_HOST), $(UCHICAGO_SCIDMZ_MWT2)
 ALLOW_CONFIG = root@$(CONDOR_HOST)/$(IP_ADDRESS)
 ALLOW_DAEMON = $(FLOCK_FROM), $(CONDOR_HOST), condor_pool@*
 ALLOW_WRITE  = $(FLOCK_FROM), $(CONDOR_HOST), condor_pool@*
-ALLOW_READ   = $(FLOCK_FROM), $(CONDOR_HOST), condor_pool@*
+ALLOW_READ   = $(FLOCK_FROM), $(CONDOR_HOST), $(VC3_FACTORIES), condor_pool@*
 
 
 # Setup the defrag daemon
