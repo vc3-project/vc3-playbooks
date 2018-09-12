@@ -60,7 +60,7 @@
         mode: 0755
 
     - name: Install vc3 environments
-    shell: /bin/vc3-builder --var TERM=linux --sys python:2.7.15=/usr --sys perl:5.16=/usr --install /opt/vc3/root --distfiles /opt/vc3/distfiles --home /opt/vc3/home  --env-to /opt/vc3/home/vc3-environments --require cctools {{ builder_options }}
+    shell: /bin/vc3-builder --var TERM=linux --install /opt/vc3/root --distfiles /opt/vc3/distfiles --home /opt/vc3/home  --env-to /opt/vc3/home/vc3-environments --require cctools {{ builder_options }}
       when: builder_options is defined 
 
     - name: Set vc3 python paths
