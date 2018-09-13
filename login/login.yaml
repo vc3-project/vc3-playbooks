@@ -15,55 +15,6 @@
       hostname:
         name: "{{ request_name }}.virtualclusters.org"
 
-    - name: Install EPEL
-      yum:
-        name: epel-release
-        state: latest
-    - name: Install OSG repos
-      yum:
-        name: http://mirror.grid.uchicago.edu/pub/osg/3.4/el7/release/x86_64/osg-release-3.4-2.osg34.el7.noarch.rpm
-        state: latest
-
-    - name: Install Perl
-      yum:
-        name: perl
-        state: latest
-
-    - name: Install Perl sane
-      yum:
-        name: perl-core
-        state: latest
-
-    - name: Install HTCondor
-      yum:
-        name: condor
-        state: latest
-
-    - name: Configure HTCondor
-      template:
-        src: templates/condor_config.local.j2
-        dest: /etc/condor/condor_config.local
-        owner: root
-        group: root
-        mode: 0644
-      notify: restart htcondor
-
-    - meta: flush_handlers
-  
-    - name: create condor password
-      shell: condor_store_cred -c add -p "{{ lookup('password', '/dev/null length=64') }}"
-  
-    - name: fetch condor password file
-      fetch:
-        src:  /etc/condor/condor_password
-        dest: "{{ condor_password_file }}"
-        flat: yes
-
-    - name: Install CVMFS
-      yum:
-        name: osg-oasis
-        state: latest
-
     - name: Add auto.cvmfs
       lineinfile:
         path: /etc/auto.master
@@ -102,21 +53,6 @@
         group: root
         mode: 0644
 
-    - name: Install C compiler
-      yum:
-        name: gcc
-        state: latest
-
-    - name: Install C++ compiler
-      yum:
-        name: gcc-c++
-        state: latest
-
-    - name: Install fortran compiler
-      yum:
-        name: gcc-gfortran
-        state: latest
-
     - name: Install vc3-builder
       copy:
         src:  /bin/vc3-builder
@@ -124,7 +60,7 @@
         mode: 0755
 
     - name: Install vc3 environments
-      shell: /bin/vc3-builder --var TERM=linux --sys python:2.7.15=/usr --sys perl:5.16=/usr --install /opt/vc3/root --distfiles /opt/vc3/distfiles --home /opt/vc3/home  --env-to /opt/vc3/home/vc3-environments {{ builder_options }}
+      shell: /bin/vc3-builder --var TERM=linux --install /opt/vc3/root --distfiles /opt/vc3/distfiles --home /opt/vc3/home  --env-to /opt/vc3/home/vc3-environments {{ builder_options }}
       when: builder_options is defined 
 
     - name: Set vc3 python paths
@@ -149,7 +85,6 @@
       when: builder_options is defined 
 
   handlers:
-  - name: restart htcondor
-    service: name=condor state=restarted
   - name: restart autofs
     service: name=autofs state=restarted
+
