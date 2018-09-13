@@ -1,0 +1,115 @@
+---
+- hosts: all
+  remote_user: "{{ setup_user_name }}"
+  become: yes
+  become_user: root
+
+  vars:
+
+    #request_name: 'somename'  ----> CALL AS: ansible-playbook --extra-vars 'request_name=somename' ....
+    cvmfs_quota_limit: 20000
+    cvmfs_http_proxy: 'http://squid.grid.uchicago.edu:3128'
+
+  tasks:
+    - name: Set hostname
+      hostname:
+        name: "{{ request_name }}.virtualclusters.org"
+
+    - name: Configure HTCondor
+      template:
+        src: templates/condor_config.local.j2
+        dest: /etc/condor/condor_config.local
+        owner: root
+        group: root
+        mode: 0644
+      notify: restart htcondor
+
+    - meta: flush_handlers
+  
+    - name: create condor password
+      shell: condor_store_cred -c add -p "{{ lookup('password', '/dev/null length=64') }}"
+  
+    - name: fetch condor password file
+      fetch:
+        src:  /etc/condor/condor_password
+        dest: "{{ condor_password_file }}"
+        flat: yes
+
+    - name: Add auto.cvmfs
+      lineinfile:
+        path: /etc/auto.master
+        regexp: '^\/cvmfs'
+        line: '/cvmfs /etc/auto.cvmfs'
+      notify: restart autofs
+
+    - name: Copy CVMFS config
+      template:
+        src: templates/cvmfs_default_local.j2
+        dest: /etc/cvmfs/default.local
+        owner: root
+        group: root
+        mode: 0644
+    - meta: flush_handlers
+
+    - name: Add VC3 users
+      user:
+        name: "{{ item.key }}"
+        comment: "{{ item.key }}"
+        state: present
+      with_dict: "{{ production_keys }}"
+
+    - name: Add VC3 user keys
+      authorized_key:
+        user: "{{ item.key }}"
+        state: present
+        key: "{{ item.value }}"
+      with_dict: "{{ production_keys }}"
+
+    - name: Add MOTD template
+      template:
+        src: templates/motd.j2
+        dest: /etc/motd
+        owner: root
+        group: root
+        mode: 0644
+
+    - name: Install vc3-builder
+      copy:
+        src:  /bin/vc3-builder
+        dest: /bin/vc3-builder
+        mode: 0755
+
+    - name: Install vc3 environments
+      shell: /bin/vc3-builder --var TERM=linux --install /opt/vc3/root --distfiles /opt/vc3/distfiles --home /opt/vc3/home  --env-to /opt/vc3/home/vc3-environments --require spark-xrootd {{ builder_options }}
+      when: builder_options is defined 
+
+    - name: Set vc3 python paths
+      lineinfile:
+        path: /usr/lib/python2.7/site-packages/vc3.pth
+        line: /opt/vc3/home/.local/lib/python2.7/site-packages 
+        create: yes
+      when: builder_options is defined 
+
+    - name: Install vc3 profile
+      file:
+        src:  /opt/vc3/home/vc3-environments.env
+        dest: /etc/profile.d/vc3-environments.010.env.sh
+        state: link
+      when: builder_options is defined 
+
+    - name: Install vc3 prologues
+      file:
+        src:  /opt/vc3/home/vc3-environments.prologue
+        dest: /etc/profile.d/vc3-environments.020.prologue.sh
+        state: link
+      when: builder_options is defined 
+
+    - name: Start spark
+      shell: /bin/vc3-builder --var TERM=linux --distfiles /opt/vc3/distfiles --home /opt/vc3/home --require spark -- '$VC3_ROOT_SPARK/sbin/start-master.sh'
+
+  handlers:
+  - name: restart htcondor
+    service: name=condor state=restarted
+  - name: restart autofs
+    service: name=autofs state=restarted
+
