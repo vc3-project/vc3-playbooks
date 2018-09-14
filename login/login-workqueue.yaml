@@ -15,6 +15,18 @@
       hostname:
         name: "{{ request_name }}.virtualclusters.org"
 
+    - name: create wq password
+      copy:
+          dest: "/etc/vc3-wq.password"
+          content: |
+              {{ lookup('password', '/dev/null length=64') }}
+  
+    - name: fetch spark config
+      fetch:
+        src:  "/etc/vc3-wq.password"
+        dest: "{{ shared_secret_file }}"
+        flat: yes
+
     - name: Add auto.cvmfs
       lineinfile:
         path: /etc/auto.master
