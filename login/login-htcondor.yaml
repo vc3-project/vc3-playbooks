@@ -32,7 +32,7 @@
     - name: fetch condor password file
       fetch:
         src:  /etc/condor/condor_password
-        dest: "{{ condor_password_file }}"
+        dest: "{{ shared_secret_file }}"
         flat: yes
 
     - name: Add auto.cvmfs

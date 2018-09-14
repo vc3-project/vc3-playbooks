@@ -15,6 +15,19 @@
       hostname:
         name: "{{ request_name }}.virtualclusters.org"
 
+    - name: create spark config
+      copy:
+          dest: "/etc/vc3-spark.conf"
+          content: |
+              spark.authenticate=true
+              spark.authenticate.secret={{ lookup('password', '/dev/null length=64') }}
+  
+    - name: fetch spark config
+      fetch:
+        src:  /etc/vc3-spark.conf
+        dest: "{{ shared_secret_file }}"
+        flat: yes
+
     - name: Add auto.cvmfs
       lineinfile:
         path: /etc/auto.master
@@ -85,7 +98,7 @@
       when: builder_options is defined 
 
     - name: Start spark
-    shell: /bin/vc3-builder --var TERM=linux --var SPARK_MASTER_HOST="{{ headnode_ip }}" --install /opt/vc3/root --distfiles /opt/vc3/distfiles --home /opt/vc3/home --require spark -- '$VC3_ROOT_SPARK/sbin/start-master.sh'
+    shell: /bin/vc3-builder --var TERM=linux --var SPARK_MASTER_HOST="{{ headnode_ip }}" --install /opt/vc3/root --distfiles /opt/vc3/distfiles --home /opt/vc3/home --require spark -- '$VC3_ROOT_SPARK/sbin/start-master.sh --properties-file /etc/vc3-spark.conf'
 
   handlers:
   - name: restart autofs
