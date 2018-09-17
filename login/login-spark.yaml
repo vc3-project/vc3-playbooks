@@ -80,7 +80,7 @@
         mode: 0755
 
     - name: Install vc3 environments
-      shell: /bin/vc3-builder --var TERM=linux --install /opt/vc3/root --distfiles /opt/vc3/distfiles --home /opt/vc3/home  --env-to /opt/vc3/home/vc3-environments --require spark-xrootd {{ builder_options }}
+      shell: /bin/vc3-builder --var TERM=linux --install /opt/vc3/root --distfiles /opt/vc3/distfiles --home /opt/vc3/home  --env-to /opt/vc3/home/vc3-environments --require spark-xrootd "{{ builder_options }}"
       when: builder_options is defined 
 
     - name: Set vc3 python paths
@@ -105,7 +105,7 @@
       when: builder_options is defined 
 
     - name: Start spark
-    shell: /bin/vc3-builder --var TERM=linux --var SPARK_MASTER_HOST="{{ headnode_ip }}" --install /opt/vc3/root --distfiles /opt/vc3/distfiles --home /opt/vc3/home --require spark -- '$VC3_ROOT_SPARK/sbin/start-master.sh --properties-file /etc/vc3-spark.conf'
+    shell: /bin/vc3-builder --var TERM=linux --var "SPARK_MASTER_HOST={{ headnode_ip }}" --install /opt/vc3/root --distfiles /opt/vc3/distfiles --home /opt/vc3/home --require spark -- '$VC3_ROOT_SPARK/sbin/start-master.sh --properties-file /etc/vc3-spark.conf'
 
   handlers:
   - name: restart autofs
