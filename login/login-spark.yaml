@@ -28,6 +28,13 @@
         dest: "{{ shared_secret_file }}"
         flat: yes
 
+    - name: make secret readable at headnode
+      file:
+          path: /etc/vc3-spark.conf
+          owner: root
+          group: wheel
+          mode: 0644
+
     - name: Add auto.cvmfs
       lineinfile:
         path: /etc/auto.master

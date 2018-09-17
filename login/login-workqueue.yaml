@@ -23,9 +23,16 @@
   
     - name: fetch spark config
       fetch:
-        src:  "/etc/vc3-wq.password"
+        src:  /etc/vc3-wq.password
         dest: "{{ shared_secret_file }}"
         flat: yes
+
+    - name: make secret readable at headnode
+      file:
+          path: /etc/vc3-wq.password
+          owner: root
+          group: wheel
+          mode: 0644
 
     - name: Add auto.cvmfs
       lineinfile:

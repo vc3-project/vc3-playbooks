@@ -28,7 +28,7 @@
   
     - name: create condor password
       shell: condor_store_cred -c add -p "{{ lookup('password', '/dev/null length=64') }}"
-  
+
     - name: fetch condor password file
       fetch:
         src:  /etc/condor/condor_password
