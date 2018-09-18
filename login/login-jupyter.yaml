@@ -98,6 +98,10 @@
         state: link
       when: builder_options is defined 
 
+    - name: make vc3 python env world readable
+      shell: find /opt/vc3/home/.local -type d -exec chmod o+x '{}' ';' || exit 0
+      shell: find /opt/vc3/home/.local         -exec chmod o+r '{}' ';' || exit 0
+
     - name: Install vc3 prologues
       file:
         src:  /opt/vc3/home/vc3-environments.prologue
