@@ -23,12 +23,6 @@
               spark.blockManager.port=9020
               spark.authenticate=true
               spark.authenticate.secret={{ lookup('password', '/dev/null length=64') }}
-  
-    - name: fetch spark config
-      fetch:
-        src:  /etc/vc3-spark.conf
-        dest: "{{ shared_secret_file }}"
-        flat: yes
 
     - name: make secret readable at headnode
       file:
@@ -36,6 +30,26 @@
           owner: root
           group: wheel
           mode: 0644
+
+    - name: create spark submit script
+      copy:
+          dest: /bin/vc3-spark-submit
+          content: |
+              #! /bin/sh
+              spark-submit --properties-file /etc/vc3-spark.conf --master "spark://{{ headnode_ip }}:7077" "$@"
+
+    - name: make submit script executable at headnode
+      file:
+          path: /bin/vc3-spark-submit
+          owner: root
+          group: wheel
+          mode: 0755
+  
+    - name: fetch spark config
+      fetch:
+        src:  /etc/vc3-spark.conf
+        dest: "{{ shared_secret_file }}"
+        flat: yes
 
     - name: Add auto.cvmfs
       lineinfile:
