@@ -80,7 +80,7 @@
         mode: 0755
 
     - name: Install vc3 environments
-      shell: /bin/vc3-builder --var TERM=linux --install /opt/vc3/root --distfiles /opt/vc3/distfiles --home /opt/vc3/home  --env-to /opt/vc3/home/vc3-environments "{{ builder_options }}"
+      shell: /bin/vc3-builder --var TERM=linux --install /opt/vc3/root --distfiles /opt/vc3/distfiles --home /opt/vc3/home  --env-to /opt/vc3/home/vc3-environments {{ builder_options }}
       when: builder_options is defined 
 
     - name: Set vc3 python paths
@@ -98,8 +98,8 @@
       when: builder_options is defined 
 
     - name: make vc3 python env world readable
-      shell: find /opt/vc3/home/.local -type d -exec chmod o+x '{}' ';' || exit 0
-      shell: find /opt/vc3/home/.local         -exec chmod o+r '{}' ';' || exit 0
+      command: find /opt/vc3/home/.local -type d -exec chmod o+x '{}' ';' || exit 0
+      command: find /opt/vc3/home/.local         -exec chmod o+r '{}' ';' || exit 0
 
     - name: Install vc3 prologues
       file:
