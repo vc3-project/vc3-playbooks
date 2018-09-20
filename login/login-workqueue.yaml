@@ -97,8 +97,11 @@
       when: builder_options is defined 
 
     - name: make vc3 python env world readable
-      command: find /opt/vc3/home/.local -type d -exec chmod o+x '{}' ';' || exit 0
-      command: find /opt/vc3/home/.local         -exec chmod o+r '{}' ';' || exit 0
+      command: "{{ item }}"
+      with_items:
+        - find     /opt/vc3/home/.local   -type d   -exec chmod 0755 '{}' ';'
+        - find     /opt/vc3/home/.local   -type f   -exec chmod 0644 '{}' ';'
+      ignore_errors: yes
 
     - name: Install vc3 prologues
       file:
