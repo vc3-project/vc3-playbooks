@@ -1,19 +1,15 @@
 ---
+- import_playbook: components/cvmfs.yaml
+
 - hosts: all
   remote_user: "{{ setup_user_name }}"
   become: yes
   become_user: root
 
-  vars:
-
-    #request_name: 'somename'  ----> CALL AS: ansible-playbook --extra-vars 'request_name=somename' ....
-    cvmfs_quota_limit: 20000
-    cvmfs_http_proxy: 'http://squid.grid.uchicago.edu:3128'
-
   tasks:
-    - name: Set hostname
-      hostname:
-        name: "{{ request_name }}.virtualclusters.org"
+      - import_tasks: components/host.yaml
+      - import_tasks: components/users.yaml
+      - import_tasks: components/builder.yaml builder_headnode_options="--require cctools"
 
     - name: create wq password
       copy:
@@ -33,84 +29,4 @@
           owner: root
           group: wheel
           mode: 0644
-
-    - name: Add auto.cvmfs
-      lineinfile:
-        path: /etc/auto.master
-        regexp: '^\/cvmfs'
-        line: '/cvmfs /etc/auto.cvmfs'
-      notify: restart autofs
-
-    - name: Copy CVMFS config
-      template:
-        src: templates/cvmfs_default_local.j2
-        dest: /etc/cvmfs/default.local
-        owner: root
-        group: root
-        mode: 0644
-    - meta: flush_handlers
-
-    - name: Add VC3 users
-      user:
-        name: "{{ item.key }}"
-        comment: "{{ item.key }}"
-        state: present
-      with_dict: "{{ production_keys }}"
-
-    - name: Add VC3 user keys
-      authorized_key:
-        user: "{{ item.key }}"
-        state: present
-        key: "{{ item.value }}"
-      with_dict: "{{ production_keys }}"
-
-    - name: Add MOTD template
-      template:
-        src: templates/motd.j2
-        dest: /etc/motd
-        owner: root
-        group: root
-        mode: 0644
-
-    - name: Install vc3-builder
-      copy:
-        src:  /bin/vc3-builder
-        dest: /bin/vc3-builder
-        mode: 0755
-
-    - name: Install vc3 environments
-      shell: /bin/vc3-builder --var TERM=linux --install /opt/vc3/root --distfiles /opt/vc3/distfiles --home /opt/vc3/home  --env-to /opt/vc3/home/vc3-environments --require cctools {{ builder_options }}
-      when: builder_options is defined 
-
-    - name: Set vc3 python paths
-      lineinfile:
-        path: /usr/lib/python2.7/site-packages/vc3.pth
-        line: /opt/vc3/home/.local/lib/python2.7/site-packages 
-        create: yes
-      when: builder_options is defined 
-
-    - name: Install vc3 profile
-      file:
-        src:  /opt/vc3/home/vc3-environments.env
-        dest: /etc/profile.d/vc3-environments.010.env.sh
-        state: link
-      when: builder_options is defined 
-
-    - name: make vc3 python env world readable
-      command: "{{ item }}"
-      with_items:
-        - find     /opt/vc3/home/.local   -type d   -exec chmod 0755 '{}' ';'
-        - find     /opt/vc3/home/.local   -type f   -exec chmod 0644 '{}' ';'
-      ignore_errors: yes
-
-    - name: Install vc3 prologues
-      file:
-        src:  /opt/vc3/home/vc3-environments.prologue
-        dest: /etc/profile.d/vc3-environments.020.prologue.sh
-        state: link
-      when: builder_options is defined 
-
-  handlers:
-  - name: restart autofs
-    service: name=autofs state=restarted
 
