@@ -1,6 +1,6 @@
 ---
-- import_playbook: condor.yaml
-- import_playbook: cvmfs.yaml
+- import_playbook: components/condor.yaml
+- import_playbook: components/cvmfs.yaml
 
 - hosts: all
   remote_user: "{{ setup_user_name }}"
