@@ -7,16 +7,16 @@
   become_user: root
 
   tasks:
-      - import_tasks: components/host.yaml
-      - import_tasks: components/users.yaml
-      - import_tasks: components/builder.yaml builder_headnode_options="--require cctools"
+    - import_tasks: components/host.yaml
+    - import_tasks: components/users.yaml
+    - import_tasks: components/builder.yaml builder_headnode_options="--require cctools"
 
     - name: create wq password
       copy:
           dest: "/etc/vc3-wq.password"
           content: |
               {{ lookup('password', '/dev/null length=64') }}
-  
+
     - name: fetch wq password
       fetch:
         src:  /etc/vc3-wq.password
