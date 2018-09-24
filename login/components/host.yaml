@@ -5,7 +5,7 @@
 
 - name: Add MOTD template
   template:
-    src: templates/motd.j2
+    src: ../templates/motd.j2
     dest: /etc/motd
     owner: root
     group: root

@@ -18,7 +18,7 @@
 
     - name: Copy CVMFS config
       template:
-        src: templates/cvmfs_default_local.j2
+        src: ../templates/cvmfs_default_local.j2
         dest: /etc/cvmfs/default.local
         owner: root
         group: root
