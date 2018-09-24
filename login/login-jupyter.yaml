@@ -175,6 +175,12 @@
         state: latest
         executable: pip3.6
 
+    - name: Install notebook
+      pip:
+        name: notebook
+        state: latest
+        executable: pip3.6
+
     - name: make dir /etc/.jupyterhub/
       command: mkdir -p '/etc/.jupyterhub'
 
