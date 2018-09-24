@@ -53,9 +53,9 @@
     - meta: flush_handlers
 
     - name: Make sure we have a 'wheel' group
-        group:
-          name: wheel
-          state: present
+      group:
+        name: wheel
+        state: present
 
     - name: Allow 'wheel' group to have passwordless sudo
         lineinfile:
