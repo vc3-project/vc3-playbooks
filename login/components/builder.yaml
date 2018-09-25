@@ -13,14 +13,12 @@
     path: /usr/lib/python2.7/site-packages/vc3.pth
     line: /opt/vc3/home/.local/lib/python2.7/site-packages 
     create: yes
-  when: builder_options is defined 
 
 - name: Install vc3 profile
   file:
     src:  /opt/vc3/home/vc3-environments.env
     dest: /etc/profile.d/vc3-environments.010.env.sh
     state: link
-  when: builder_options is defined 
 
 - name: make vc3 python env world readable
   command: "{{ item }}"
@@ -34,5 +32,4 @@
     src:  /opt/vc3/home/vc3-environments.prologue
     dest: /etc/profile.d/vc3-environments.020.prologue.sh
     state: link
-  when: builder_options is defined 
 
