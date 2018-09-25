@@ -6,10 +6,13 @@
   become: yes
   become_user: root
 
+  vars:
+    builder_headnode_options: '--require cctools'
+
   tasks:
     - import_tasks: components/host.yaml
     - import_tasks: components/users.yaml
-    - import_tasks: components/builder.yaml builder_headnode_options="--require cctools"
+    - import_tasks: components/builder.yaml
 
     - name: create wq password
       copy:

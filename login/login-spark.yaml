@@ -6,10 +6,13 @@
   become: yes
   become_user: root
 
+  vars:
+    builder_headnode_options: '--require spark-xrootd'
+
   tasks:
     - import_tasks: components/host.yaml
     - import_tasks: components/users.yaml
-    - import_tasks: components/builder.yaml builder_headnode_options="--require spark-xrootd"
+    - import_tasks: components/builder.yaml
 
     - name: create spark config
       copy:
