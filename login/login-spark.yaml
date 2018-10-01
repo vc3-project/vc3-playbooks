@@ -21,6 +21,7 @@
               spark.driver.port=9000
               spark.blockManager.port=9020
               spark.files.useFetchCache=false
+              spark.ui.reverseProxy=true
               spark.authenticate=true
               spark.authenticate.secret={{ lookup('password', '/dev/null length=64') }}
 
