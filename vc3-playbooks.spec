@@ -36,11 +36,22 @@ cp -r * %{buildroot}/%{_sysconfdir}/vc3/vc3-playbooks
 rm -f %{buildroot}/%{_sysconfdir}/vc3/vc3-playbooks/vc3-playbooks.spec
 
 %files
-%{_sysconfdir}/vc3/vc3-playbooks/login/login-dynamic.yaml
-%{_sysconfdir}/vc3/vc3-playbooks/login/login.yaml
+%{_sysconfdir}/vc3/vc3-playbooks/login/login-htcondor.yaml
+%{_sysconfdir}/vc3/vc3-playbooks/login/login-jupyter.yaml
+%{_sysconfdir}/vc3/vc3-playbooks/login/login-spark.yaml
+%{_sysconfdir}/vc3/vc3-playbooks/login/login-workqueue.yaml
 %{_sysconfdir}/vc3/vc3-playbooks/login/templates/condor_config.local.j2
 %{_sysconfdir}/vc3/vc3-playbooks/login/templates/cvmfs_default_local.j2
 %{_sysconfdir}/vc3/vc3-playbooks/login/templates/motd.j2
+%{_sysconfdir}/vc3/vc3-playbooks/login/components/builder.yaml
+%{_sysconfdir}/vc3/vc3-playbooks/login/components/condor.yaml
+%{_sysconfdir}/vc3/vc3-playbooks/login/components/cvmfs.yaml
+%{_sysconfdir}/vc3/vc3-playbooks/login/components/host.yaml
+%{_sysconfdir}/vc3/vc3-playbooks/login/components/users.yaml
+%{_sysconfdir}/vc3/vc3-playbooks/login/config/jupyterhub.service
+%{_sysconfdir}/vc3/vc3-playbooks/login/config/jupyterhub_config.py
+%{_sysconfdir}/vc3/vc3-playbooks/login/config/jupyterhub_config.pyc
+%{_sysconfdir}/vc3/vc3-playbooks/login/config/jupyterhub_config.pyo
 
 
 %changelog
