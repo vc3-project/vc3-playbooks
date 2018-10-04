@@ -7,7 +7,7 @@
   become_user: root
 
   vars:
-    builder_headnode_options: '--require spark-xrootd'
+    builder_headnode_options: '--no-sys python --require spark-xrootd'
 
   tasks:
     - import_tasks: components/host.yaml
@@ -54,5 +54,5 @@
           mode: 0755
 
     - name: Start spark
-      shell: nohup /bin/vc3-builder --var TERM=linux --var "SPARK_MASTER_HOST={{ headnode_ip }}" --install /opt/vc3/root --distfiles /opt/vc3/distfiles --home /opt/vc3/home --require spark --no-sys python -- '$VC3_ROOT_SPARK/sbin/start-master.sh --properties-file /etc/vc3-spark.conf' &
+      shell: nohup /bin/vc3-builder --var TERM=linux --var "SPARK_MASTER_HOST={{ headnode_ip }}" --install /opt/vc3/root --distfiles /opt/vc3/distfiles --home /opt/vc3/home --require spark -- '$VC3_ROOT_SPARK/sbin/start-master.sh --properties-file /etc/vc3-spark.conf' &
 
