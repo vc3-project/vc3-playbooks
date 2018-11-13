@@ -11,6 +11,7 @@
     - import_tasks: components/host.yaml
     - import_tasks: components/users.yaml
     - import_tasks: components/builder.yaml
+    - import_tasks: components/globusmap.yaml
 
     - name: Install IUS repo
       yum:
@@ -51,6 +52,18 @@
         state: latest
         executable: pip3.6
 
+    - name: Install globus-sdk
+      pip:
+        name: globus-sdk
+        state: latest
+        executable: pip3.6
+
+    - name: Install oauthenticator
+      pip:
+        name: oauthenticator
+        state: latest
+        executable: pip3.6
+
     - name: Install notebook
       pip:
         name: notebook
@@ -62,6 +75,14 @@
 
     - name: Configure jupyter
       copy: src="./config/jupyterhub_config.py"  dest="/etc/.jupyterhub/jupyterhub_config.py"
+
+    - name: Configure jupyter globus auth
+      copy:
+        src: ./config/jupyterhub.conf
+        dest: /etc/.jupyterhub/jupyterhub.conf
+        owner: root
+        group: root
+        mode: 0400
 
     - name: Generate openssl certificate
       command: "openssl req -new -newkey rsa:4096 -days 365 -nodes -x509 \ -subj '/C=US/ST=Illinois/L=Chicago/O=UoC/CN=notebookserver' \ -keyout /etc/.jupyterhub/jupyterhub.key  -out /etc/.jupyterhub/jupyterhub.crt"
