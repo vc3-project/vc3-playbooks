@@ -14,7 +14,7 @@
     - import_tasks: components/users.yaml
     - import_tasks: components/builder.yaml
 
-    - name: create spark config
+    - name: create spark/s3-minio config
       copy:
           dest: "/etc/vc3-spark.conf"
           content: |
@@ -24,6 +24,8 @@
               spark.ui.reverseProxy=true
               spark.authenticate=true
               spark.authenticate.secret={{ lookup('password', '/dev/null length=64') }}
+              minio.accesskey={{ lookup('password', '/dev/null length=32 chars=ascii_letters,digits') }}
+              minio.secretkey={{ lookup('password', '/dev/null length=32 chars=ascii_letters,digits') }}
 
     - name: make secret readable at headnode
       file:
@@ -46,6 +48,16 @@
               #! /bin/sh
               spark-submit --properties-file /etc/vc3-spark.conf --master "spark://{{ headnode_ip }}:7077" "$@"
 
+    - name: create minio launch script
+      copy:
+          dest: /bin/vc3-minio-start
+          content: |
+              #! /bin/sh
+              access=$(sed -n -e 's/^minio.accesskey=//p' /etc/vc3-spark.conf)
+              secret=$(sed -n -e 's/^minio.secretkey=//p' /etc/vc3-spark.conf)
+              mkdir -p /data
+              /bin/vc3-builder --var TERM=linux --var "MINIO_ACCESS_KEY=${access}" --var "MINIO_SECRET_KEY=${secret}" --install /opt/vc3/root --distfiles /opt/vc3/distfiles --home /opt/vc3/home --require minio -- '$VC3_ROOT_MINIO/bin/minio /data'
+
     - name: make submit script executable at headnode
       file:
           path: /bin/vc3-spark-submit
@@ -53,6 +65,16 @@
           group: wheel
           mode: 0755
 
+    - name: make minio script executable at headnode
+      file:
+          path: /bin/vc3-minio-start
+          owner: root
+          group: wheel
+          mode: 0755
+
     - name: Start spark
       shell: nohup /bin/vc3-builder --var TERM=linux --var "SPARK_MASTER_HOST={{ headnode_ip }}" --install /opt/vc3/root --distfiles /opt/vc3/distfiles --home /opt/vc3/home --require spark -- '$VC3_ROOT_SPARK/sbin/start-master.sh --properties-file /etc/vc3-spark.conf' &
+
+    - name: Start minio s3
+    shell: nohup /bin/vc3-minio-start &
 
