@@ -74,6 +74,22 @@
           group: wheel
           mode: 0755
 
+    - name: create hadoop conf directories
+      file:
+          path: /etc/hadoop/conf
+          state: directory
+          owner: root
+          group: wheel
+          mode: 0755
+
+    - name: create hadoop/s3 conf file
+      template:
+        src: ../templates/core-site.xml.j2
+        dest: /etc/hadoop/conf/core-site.xml
+        owner: root
+        group: root
+        mode: 0644
+
     - name: Start spark
       shell: nohup /bin/vc3-builder --var TERM=linux --var "SPARK_MASTER_HOST={{ headnode_ip }}" --install /opt/vc3/root --distfiles /opt/vc3/distfiles --home /opt/vc3/home --require spark -- '$VC3_ROOT_SPARK/sbin/start-master.sh --properties-file /etc/vc3-spark.conf' &
 
