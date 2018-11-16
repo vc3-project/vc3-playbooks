@@ -8,6 +8,8 @@
 
   vars:
     builder_headnode_options: '--no-sys python --require spark-xrootd'
+    s3_accesskey: {{ lookup('password', '/dev/null length=32 chars=ascii_letters,digits') }}
+    s3_secretkey: {{ lookup('password', '/dev/null length=32 chars=ascii_letters,digits') }}
 
   tasks:
     - import_tasks: components/host.yaml
@@ -18,14 +20,14 @@
       copy:
           dest: "/etc/vc3-spark.conf"
           content: |
-              spark.driver.port=9000
+              spark.driver.port=9001
               spark.blockManager.port=9020
               spark.files.useFetchCache=false
               spark.ui.reverseProxy=true
               spark.authenticate=true
               spark.authenticate.secret={{ lookup('password', '/dev/null length=64') }}
-              minio.accesskey={{ lookup('password', '/dev/null length=32 chars=ascii_letters,digits') }}
-              minio.secretkey={{ lookup('password', '/dev/null length=32 chars=ascii_letters,digits') }}
+              minio.accesskey={{ s3_accesskey }}
+              minio.secretkey={{ s3_secretkey }}
 
     - name: make secret readable at headnode
       file:
