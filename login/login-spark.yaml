@@ -8,8 +8,8 @@
 
   vars:
     builder_headnode_options: '--no-sys python --require spark-xrootd'
-    s3_accesskey: {{ lookup('password', '/dev/null length=32 chars=ascii_letters,digits') }}
-    s3_secretkey: {{ lookup('password', '/dev/null length=32 chars=ascii_letters,digits') }}
+    s3_accesskey: "{{ lookup('password', '/dev/null length=32 chars=ascii_letters,digits') }}"
+    s3_secretkey: "{{ lookup('password', '/dev/null length=32 chars=ascii_letters,digits') }}"
 
   tasks:
     - import_tasks: components/host.yaml
