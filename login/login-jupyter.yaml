@@ -12,6 +12,7 @@
     - import_tasks: components/users.yaml
     - import_tasks: components/builder.yaml
     - import_tasks: components/globusmap.yaml
+    - import_tasks: components/jupyter_tutorials.yaml
 
     - name: Install IUS repo
       yum:
@@ -36,6 +37,17 @@
         name: pip
         extra_args: --upgrade
         executable: pip3.6
+
+    - name: Install python2-pip
+      yum:
+        name: python2-pip
+        state: latest
+
+    - name: Upgrade python2 pip
+      pip:
+        name: pip
+        extra_args: --upgrade
+        executable: pip2
 
     - name: Install node
       yum:
@@ -64,11 +76,41 @@
         state: latest
         executable: pip3.6
 
+    - name: Install htcondor python3 bindings
+      pip:
+        name: htcondor
+        state: latest
+        executable: pip3.6
+
+    - name: Install htcondor python2 bindings
+      pip:
+        name: htcondor
+        state: latest
+        executable: pip2
+
     - name: Install notebook
       pip:
         name: notebook
         state: latest
         executable: pip3.6
+
+    - name: Install bash_kernel
+      pip:
+        name: bash_kernel
+        state: latest
+        executable: pip3.6
+
+    - name: Load module for bash_kernel
+      command: python3.6 -m bash_kernel.install
+
+    - name: Install ipykernel
+      pip:
+        name: ipykernel
+        state: latest
+        executable: pip2
+
+    - name: Load ipykernel module for python2 notebooks
+      command: python2 -m ipykernel install
 
     - name: make dir /etc/.jupyterhub/
       command: mkdir -p '/etc/.jupyterhub'
