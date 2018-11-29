@@ -26,6 +26,7 @@
               spark.ui.reverseProxy=true
               spark.authenticate=true
               spark.authenticate.secret={{ lookup('password', '/dev/null length=64') }}
+              spark.hadoop.fs.s3a.impl=org.apache.hadoop.fs.s3a.S3AFileSystem
               spark.hadoop.fs.s3a.access.key={{ s3_accesskey }}
               spark.hadoop.fs.s3a.secret.key={{ s3_secretkey }}
 
