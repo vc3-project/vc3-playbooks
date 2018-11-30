@@ -7,7 +7,7 @@
   become_user: root
 
   vars:
-    builder_headnode_options: '--no-sys python --require spark-xrootd'
+    builder_headnode_options: '--no-sys python --require spark-xrootd minio minio-client'
     s3_accesskey_x: "{{ lookup('password', '/dev/null length=32 chars=ascii_letters,digits') }}"
     s3_secretkey_x: "{{ lookup('password', '/dev/null length=32 chars=ascii_letters,digits') }}"
 
@@ -18,6 +18,8 @@
 
     - set_fact:
         s3_accesskey: "{{ s3_accesskey_x }}"
+
+    - set_fact:
         s3_secretkey: "{{ s3_secretkey_x }}"
 
     - name: create spark/s3-minio config
@@ -65,7 +67,7 @@
               access=$(sed -n -e 's/^spark.hadoop.fs.s3a.access.key=//p' /etc/vc3-spark.conf)
               secret=$(sed -n -e 's/^spark.hadoop.fs.s3a.secret.key=//p' /etc/vc3-spark.conf)
               mkdir -p /data
-              /bin/vc3-builder --var TERM=linux --var "MINIO_ACCESS_KEY=${access}" --var "MINIO_SECRET_KEY=${secret}" --install /opt/vc3/root --distfiles /opt/vc3/distfiles --home /opt/vc3/home --require minio -- '$VC3_ROOT_MINIO/bin/minio server /data'
+              /bin/vc3-builder --var TERM=linux --var "MINIO_ACCESS_KEY=${access}" --var "MINIO_SECRET_KEY=${secret}" --install /opt/vc3/root --distfiles /opt/vc3/distfiles --home /opt/vc3/home --require minio -- '$VC3_ROOT_MINIO/bin/minio' server /data
 
     - name: make submit script executable at headnode
       file:
@@ -98,7 +100,7 @@
         mode: 0644
 
     - name: Start spark
-      shell: nohup /bin/vc3-builder --var TERM=linux --var "SPARK_MASTER_HOST={{ headnode_ip }}" --var "HADOOP_CONF_DIR=/etc/hadoop/conf" --install /opt/vc3/root --distfiles /opt/vc3/distfiles --home /opt/vc3/home --require spark -- '$VC3_ROOT_SPARK/sbin/start-master.sh --properties-file /etc/vc3-spark.conf' &
+      shell: nohup /bin/vc3-builder --var TERM=linux --var "SPARK_MASTER_HOST={{ headnode_ip }}" --var "HADOOP_CONF_DIR=/etc/hadoop/conf" --install /opt/vc3/root --distfiles /opt/vc3/distfiles --home /opt/vc3/home --require spark -- '$VC3_ROOT_SPARK/sbin/start-master.sh' --properties-file /etc/vc3-spark.conf &
 
     - name: Start minio s3
       shell: nohup /bin/vc3-minio-start &
