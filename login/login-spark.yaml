@@ -7,7 +7,7 @@
   become_user: root
 
   vars:
-    builder_headnode_options: '--no-sys python --require spark-xrootd minio minio-client'
+    builder_headnode_options: '--no-sys python --require spark-xrootd --require minio --require minio-client'
     s3_accesskey_x: "{{ lookup('password', '/dev/null length=32 chars=ascii_letters,digits') }}"
     s3_secretkey_x: "{{ lookup('password', '/dev/null length=32 chars=ascii_letters,digits') }}"
 
