@@ -27,6 +27,12 @@
     - name: Install python3.6 dev package
       yum:
         name: python36u-devel
+
+    - name: Link python3.6 -> python3
+      file:
+        src: /usr/bin/python3.6
+        dest: /usr/bin/python3
+        state: link
     
     - name: Install pip
       yum:
