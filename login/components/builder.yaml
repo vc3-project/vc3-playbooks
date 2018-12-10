@@ -8,11 +8,20 @@
 - name: Install vc3 environments
   shell: /bin/vc3-builder --var TERM=linux --install /opt/vc3/root --distfiles /opt/vc3/distfiles --home /opt/vc3/home  --env-to /opt/vc3/home/vc3-environments {{ builder_headnode_options | default('--require noop') }} {{ builder_options | default('--require noop') }}
 
+- name: Find vc3 python paths
+  find:
+    paths: /opt/vc3/home/.local/lib
+    recurse: no
+    patterns: 'python*'
+    file_type: directory
+  register: find_pythonvers
+
 - name: Set vc3 python paths
   lineinfile:
-    path: /usr/lib/python2.7/site-packages/vc3.pth
-    line: /opt/vc3/home/.local/lib/python2.7/site-packages 
+    path: "/usr/lib/{{ item.path }}/site-packages/vc3.pth"
+    line: "/opt/vc3/home/.local/lib/{{ item.path }}/site-packages"
     create: yes
+  with_items: "{{ find_pythonvers.files }}"
 
 - name: Install vc3 profile
   file:
@@ -23,8 +32,9 @@
 - name: make vc3 python env world readable
   command: "{{ item }}"
   with_items:
-    - find     /opt/vc3/home/.local   -type d   -exec chmod 0755 '{}' ';'
-    - find     /opt/vc3/home/.local   -type f   -exec chmod 0644 '{}' ';'
+    - find     /opt/vc3/home/.local       -type d   -exec chmod 0755 '{}' ';'
+    - find     /opt/vc3/home/.local       -type f   -exec chmod 0644 '{}' ';'
+    - find     /opt/vc3/home/.local/bin   -type f   -exec chmod 0755 '{}' ';'
   ignore_errors: yes
 
 - name: Install vc3 prologues
