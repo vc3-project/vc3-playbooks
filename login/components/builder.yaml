@@ -18,7 +18,7 @@
 
 - name: Set vc3 python paths
   lineinfile:
-    path: "/usr/lib/{{ item.path }}/site-packages/vc3.pth"
+    path: "/usr/lib/{{ item.path | basename }}/site-packages/vc3.pth"
     line: "{{ item.path }}/site-packages"
     create: yes
   with_items: "{{ find_pythonvers.files }}"
