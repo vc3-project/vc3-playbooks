@@ -28,7 +28,7 @@
     for path in $(find /opt/vc3/root -type d -name "site-packages"); do
         pythoncmd=$(echo "$path" | sed -n 's/.*\(python[0-9]*\).*/\1/p')
         pythonver=$(echo "${path}" | sed -n 's/.*\(python[0-9].[0-9]*\).*/\1/p')
-        $pythoncmd -c 'import sys; print("\n".join(sys.path))' > "${path}/system_${pythonver}.pth"
+        env -i $pythoncmd -c 'import sys; print("\n".join(sys.path))' > "${path}/system_${pythonver}.pth"
         echo "/opt/vc3/home/.local/lib/${pythonver}/site-packages" >> "${path}/system_${pythonver}.pth"
     done
 
