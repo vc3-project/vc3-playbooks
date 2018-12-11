@@ -1,9 +1,8 @@
 ---
 - name: Add tutorial files to user home areas
   copy:
-    src: ../jupyter_files/
+    src: ../jupyter_files
     dest: "~{{ item.key }}/tutorials"
     owner: "{{ item.key }}"
     group: "{{ item.key }}"
-    mode: 0644
   with_dict: "{{ production_keys }}"

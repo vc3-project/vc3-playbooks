@@ -111,3 +111,5 @@ c.CryptKeeper.keys = [ os.urandom(32) ]
 
 c.VC3GlobusOAuthenticator.scope = ['profile', 'openid', 'urn:globus:auth:scope:demo-resource-server:all']
 # c.Authenticator.admin_users = ['vc3-user']
+# Create notebooks with shell environment
+c.Spawner.cmd = '/etc/.jupyterhub/notebook_wrapper.sh'
