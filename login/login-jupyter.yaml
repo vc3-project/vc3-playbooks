@@ -132,6 +132,14 @@
         group: root
         mode: 0400
 
+    - name: Add notebook wrapper
+      copy:
+        src: ./config/notebook_wrapper.sh
+        dest: /etc/.jupyterhub/notebook_wrapper.sh
+        owner: root
+        group: root
+        mode: 0755
+
     - name: Generate openssl certificate
       command: "openssl req -new -newkey rsa:4096 -days 365 -nodes -x509 \ -subj '/C=US/ST=Illinois/L=Chicago/O=UoC/CN=notebookserver' \ -keyout /etc/.jupyterhub/jupyterhub.key  -out /etc/.jupyterhub/jupyterhub.crt"
 
