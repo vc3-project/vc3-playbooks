@@ -1,5 +1,4 @@
 - import_playbook: components/cvmfs.yaml
-- import_playbook: components/condor.yaml
 
 - name: Login + install latest version of Python 3.6, Jupyter, and all required dependencies
   hosts: all
@@ -157,4 +156,6 @@
     
     - name: restart systemctl
       command: systemctl restart jupyterhub.service
+
+    - import_playbook: login-spark.yaml
 
