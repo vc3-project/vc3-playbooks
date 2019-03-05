@@ -64,6 +64,9 @@
         name: configurable-http-proxy
         global: yes
     
+    - name: Install tornado (for jupyter)
+      command: pip3.6 install tornado==5.1.1
+
     - name: Install jupyterhub
       pip:
         name: jupyterhub
