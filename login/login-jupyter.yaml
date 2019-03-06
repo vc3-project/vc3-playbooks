@@ -157,5 +157,3 @@
     - name: restart systemctl
       command: systemctl restart jupyterhub.service
 
-    - import_playbook: login-spark.yaml
-
