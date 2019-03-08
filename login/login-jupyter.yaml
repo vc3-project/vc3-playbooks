@@ -75,11 +75,8 @@
     - name: Load module for bash_kernel
       command: python3.6 -m bash_kernel.install
 
-    - name: Install ipykernel
-      pip:
-        name: ipykernel
-        state: latest
-        executable: pip2
+    - name: Install ipykernel (versions to allow python2)
+      command: pip2 install tornado==5.1.1 ipython==5.7 ipykernel==4.10
 
     - name: Load ipykernel module for python2 notebooks
       command: python2 -m ipykernel install
