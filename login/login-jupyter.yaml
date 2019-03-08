@@ -18,42 +18,6 @@
         name: https://centos7.iuscommunity.org/ius-release.rpm
         state: present
 
-    - name: Install python3.6
-      yum:
-        name: python36u
-        state: latest
-    
-    - name: Install python3.6 dev package
-      yum:
-        name: python36u-devel
-
-    - name: Link python3.6 -> python3
-      file:
-        src: /usr/bin/python3.6
-        dest: /usr/bin/python3
-        state: link
-    
-    - name: Install pip
-      yum:
-        name: python36u-pip
-
-    - name: Upgrade pip
-      pip:
-        name: pip
-        extra_args: --upgrade
-        executable: pip3.6
-
-    - name: Install python2-pip
-      yum:
-        name: python2-pip
-        state: latest
-
-    - name: Upgrade python2 pip
-      pip:
-        name: pip
-        extra_args: --upgrade
-        executable: pip2
-
     - name: Install node
       yum:
         name: nodejs
