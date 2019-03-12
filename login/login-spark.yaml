@@ -1,102 +1,10 @@
----
-- import_playbook: components/cvmfs.yaml
-
-- hosts: all
-  remote_user: "{{ setup_user_name }}"
+- name: spark login node
+  hosts: all
   become: yes
   become_user: root
 
-  vars:
-    builder_headnode_options: '--require spark-xrootd --require minio --require minio-client'
-    s3_accesskey_x: "{{ lookup('password', '/dev/null length=32 chars=ascii_letters,digits') }}"
-    s3_secretkey_x: "{{ lookup('password', '/dev/null length=32 chars=ascii_letters,digits') }}"
-
   tasks:
-    - import_tasks: components/host.yaml
-    - import_tasks: components/users.yaml
-    - import_tasks: components/builder.yaml
-
-    - set_fact:
-        s3_accesskey: "{{ s3_accesskey_x }}"
-
-    - set_fact:
-        s3_secretkey: "{{ s3_secretkey_x }}"
-
-    - name: create spark/s3-minio config
-      copy:
-          dest: "/etc/vc3-spark.conf"
-          content: |
-              spark.driver.port=9001
-              spark.blockManager.port=9020
-              spark.files.useFetchCache=false
-              spark.ui.reverseProxy=true
-              spark.authenticate=true
-              spark.authenticate.secret={{ lookup('password', '/dev/null length=64') }}
-              spark.hadoop.fs.s3a.endpoint={{ headnode_ip }}:9000
-              spark.hadoop.fs.s3a.connection.ssl.enabled=false
-              spark.hadoop.fs.s3a.impl=org.apache.hadoop.fs.s3a.S3AFileSystem
-              spark.hadoop.fs.s3a.access.key={{ s3_accesskey }}
-              spark.hadoop.fs.s3a.secret.key={{ s3_secretkey }}
-
-    - name: make secret readable at headnode
-      file:
-          path: /etc/vc3-spark.conf
-          owner: root
-          group: wheel
-          mode: 0644
-
-    - name: fetch spark config
-      fetch:
-        src:  /etc/vc3-spark.conf
-        dest: "{{ shared_secret_file }}"
-        flat: yes
-
-
-    - name: create spark submit script
-      copy:
-          dest: /bin/vc3-spark-submit
-          content: |
-              #! /bin/sh
-              spark-submit --properties-file /etc/vc3-spark.conf --master "spark://{{ headnode_ip }}:7077" "$@"
-
-    - name: create minio launch script
-      copy:
-          dest: /bin/vc3-minio-start
-          content: |
-              #! /bin/sh
-              access=$(sed -n -e 's/^spark.hadoop.fs.s3a.access.key=//p' /etc/vc3-spark.conf)
-              secret=$(sed -n -e 's/^spark.hadoop.fs.s3a.secret.key=//p' /etc/vc3-spark.conf)
-              mkdir -p /data
-              nohup /bin/vc3-builder --var TERM=linux --var "MINIO_ACCESS_KEY=${access}" --var "MINIO_SECRET_KEY=${secret}" --install /opt/vc3/root --distfiles /opt/vc3/distfiles --home /opt/vc3/home --require minio -- '$VC3_ROOT_MINIO/bin/minio' server /data &
-
-    - name: make submit script executable at headnode
-      file:
-          path: /bin/vc3-spark-submit
-          owner: root
-          group: wheel
-          mode: 0755
-
-    - name: make minio script executable at headnode
-      file:
-          path: /bin/vc3-minio-start
-          owner: root
-          group: wheel
-          mode: 0755
-
-    - name: create hadoop/s3 conf file
-      template:
-        src: ../templates/core-site.xml.j2
-        dest: /opt/vc3/root/hadoop-core-site.xml
-        owner: root
-        group: root
-        mode: 0644
-
-    - name: Configure hadoop
-      shell: /bin/vc3-builder --var TERM=linux --install /opt/vc3/root --distfiles /opt/vc3/distfiles --home /opt/vc3/home --require hadoop -- mv /opt/vc3/root/hadoop-core-site.xml '$VC3_ROOT_HADOOP/etc/hadoop/core-site.xml'
-
-    - name: Start spark
-      shell: nohup /bin/vc3-builder --var TERM=linux --var "SPARK_MASTER_HOST={{ headnode_ip }}" --var "SPARK_MASTER_WEBUI_PORT=9080" --install /opt/vc3/root --distfiles /opt/vc3/distfiles --home /opt/vc3/home --require spark-xrootd -- '$VC3_ROOT_SPARK/sbin/start-master.sh' --properties-file /etc/vc3-spark.conf &
-
-    - name: Start minio s3
-      shell: nohup /bin/vc3-minio-start &
+    - import_tasks: components/minio.yaml
+    - import_tasks: components/common.yaml
+    - import_tasks: components/spark.yaml
 
