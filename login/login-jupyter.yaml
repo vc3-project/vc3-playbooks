@@ -1,5 +1,3 @@
-- import_playbook: components/cvmfs.yaml
-
 - name: Login + install latest version of Python 3.6, Jupyter, and all required dependencies
   hosts: all
   remote_user: "{{ setup_user_name }}"
@@ -7,9 +5,10 @@
   become_user: root
 
   tasks:
-    - import_tasks: components/host.yaml
-    - import_tasks: components/users.yaml
-    - import_tasks: components/builder.yaml
+    - set_fact:
+        builder_headnode_options: "{{ builder_headnode_options | default('--require noop') }} --require python --require python-pip"
+
+    - import_tasks: components/common.yaml
     - import_tasks: components/globusmap.yaml
     - import_tasks: components/jupyter_tutorials.yaml
 
@@ -43,16 +42,6 @@
         extra_args: --upgrade
         executable: pip3.6
 
-    - name: Install python2-pip
-      yum:
-        name: python2-pip
-        state: latest
-
-    - name: Upgrade python2 pip
-      pip:
-        name: pip
-        extra_args: --upgrade
-        executable: pip2
 
     - name: Install node
       yum:
@@ -91,10 +80,7 @@
         executable: pip3.6
 
     - name: Install htcondor python2 bindings
-      pip:
-        name: htcondor
-        state: latest
-        executable: pip2
+      command: /opt/vc3/home/.local/bin/pip2 install htcondor
 
     - name: Install notebook
       pip:
@@ -112,7 +98,7 @@
       command: python3.6 -m bash_kernel.install
 
     - name: Install ipykernel (versions to allow python2)
-      command: pip2 install tornado==5.1.1 ipython==5.7 ipykernel==4.10
+      command: /opt/vc3/home/.local/bin/pip2 install tornado==5.1.1 ipython==5.7 ipykernel==4.10
 
     - name: Load ipykernel module for python2 notebooks
       command: python2 -m ipykernel install
@@ -145,12 +131,6 @@
     - name: copy jupyter.service to client
       copy: src="./config/jupyterhub.service"  dest="/usr/lib/systemd/system/jupyterhub.service"
 
-    - name: add to systemctl
-      command: systemctl enable jupyterhub.service
-
-    - name: reload systemctl
-      command: systemctl daemon-reload
-    
-    - name: restart systemctl
-      command: systemctl restart jupyterhub.service
+    - name: start jupyterhub
+      service: name=jupyterhub state=restarted
 
