@@ -1,6 +1,4 @@
 - import_tasks: cvmfs.yaml
-- import_tasks: minio.yaml
 - import_tasks: host.yaml
 - import_tasks: users.yaml
 - import_tasks: builder.yaml
-
