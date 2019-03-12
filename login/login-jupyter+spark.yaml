@@ -6,5 +6,6 @@
   become_user: root
 
   tasks:
+    - import_tasks: components/minio.yaml
     - import_tasks: components/spark.yaml
 

@@ -48,6 +48,6 @@
 - name: Configure hadoop
   shell: /bin/vc3-builder --var TERM=linux --install /opt/vc3/root --distfiles /opt/vc3/distfiles --home /opt/vc3/home --require hadoop -- mv /opt/vc3/root/hadoop-core-site.xml '$VC3_ROOT_HADOOP/etc/hadoop/core-site.xml'
 
-- name: restart minio s3
-  service: name=minio state=restarted
+#- name: restart minio s3
+#  service: name=minio state=restarted
 
