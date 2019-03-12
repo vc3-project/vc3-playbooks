@@ -1,31 +1,22 @@
 ---
-- hosts: all
-  remote_user: "{{ setup_user_name }}"
-  become: yes
-  become_user: root
+- name: Configure HTCondor
+  template:
+    src: ../templates/condor_config.local.j2
+    dest: /etc/condor/condor_config.local
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart htcondor
 
-  tasks:
-    - name: Configure HTCondor
-      template:
-        src: ../templates/condor_config.local.j2
-        dest: /etc/condor/condor_config.local
-        owner: root
-        group: root
-        mode: 0644
-      notify: restart htcondor
+- name: create condor password
+  shell: condor_store_cred -c add -p "{{ lookup('password', '/dev/null length=64') }}"
 
-    - meta: flush_handlers
-  
-    - name: create condor password
-      shell: condor_store_cred -c add -p "{{ lookup('password', '/dev/null length=64') }}"
+- name: fetch condor password file
+  fetch:
+    src:  /etc/condor/condor_password
+    dest: "{{ shared_secret_file }}"
+    flat: yes
 
-    - name: fetch condor password file
-      fetch:
-        src:  /etc/condor/condor_password
-        dest: "{{ shared_secret_file }}"
-        flat: yes
-
-  handlers:
-  - name: restart htcondor
-    service: name=condor state=restarted
+- name: restart htcondor
+  service: name=condor state=restarted
 
