@@ -9,7 +9,6 @@
         builder_headnode_options: "{{ builder_headnode_options | default('--require noop') }} --require python --require python-pip"
 
     - import_tasks: components/common.yaml
-    - import_tasks: components/globusmap.yaml
     - import_tasks: components/jupyter_tutorials.yaml
 
     - name: Install IUS repo
