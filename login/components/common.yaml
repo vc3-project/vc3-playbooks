@@ -1,3 +1,5 @@
+- import_tasks: etcdir.yaml
+- import_tasks: globusmap.yaml
 - import_tasks: cvmfs.yaml
 - import_tasks: host.yaml
 - import_tasks: users.yaml
