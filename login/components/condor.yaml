@@ -6,7 +6,9 @@
     owner: root
     group: root
     mode: 0644
-  notify: restart htcondor
+
+- name: restart htcondor
+  service: name=condor state=restarted
 
 - name: create condor password
   shell: condor_store_cred -c add -p "{{ lookup('password', '/dev/null length=64') }}"
@@ -17,6 +19,4 @@
     dest: "{{ shared_secret_file }}"
     flat: yes
 
-- name: restart htcondor
-  service: name=condor state=restarted
 
