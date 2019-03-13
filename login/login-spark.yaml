@@ -1,5 +1,6 @@
 - name: spark login node
   hosts: all
+  remote_user: "{{ setup_user_name }}"
   become: yes
   become_user: root
 
