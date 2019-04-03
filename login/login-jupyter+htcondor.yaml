@@ -1,3 +1,10 @@
-- import_playbook: components/condor.yaml
 - import_playbook: login-jupyter.yaml
+
+- hosts: all
+  remote_user: "{{ setup_user_name }}"
+  become: yes
+  become_user: root
+
+  tasks:
+    - import_playbook: components/condor.yaml
 
