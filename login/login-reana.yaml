@@ -64,6 +64,9 @@
         file: docker-ce
         baseurl: https://download.docker.com/linux/centos/7/$basearch/stable
         enabled: yes
+        sslverify: yes
+        gpgcheck: no
+      become: yes
     
     - name: Install Docker CE
       yum:
