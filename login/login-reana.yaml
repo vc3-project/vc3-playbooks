@@ -60,9 +60,9 @@
     - name: Add docker yum repository
       yum_repository:
         name: docker-ce
-        description: Docker CE repo
+        description: Docker CE repo - $basearch
         file: docker-ce
-        baseurl: https://download.docker.com/linux/centos/docker-ce.repo
+        baseurl: https://download.docker.com/linux/centos/7/$basearch/stable
         enabled: yes
     
     - name: Install Docker CE
