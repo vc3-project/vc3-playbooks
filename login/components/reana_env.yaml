@@ -8,14 +8,50 @@
       ALLOW_READ   = $(ALLOW_READ), $(DOCKER)
 
 - name: Get HTCondor IP Address
-  command: condor_status -schedd -af MyAddress
+  shell: |
+    condor_status -schedd -af MyAddress
+    wait_condor(){
+      local max_retries=15
+      count=0
+      until [ $count -ge $max_retries ]
+      do
+          htaddr=$(condor_status -schedd -af MyAddress)
+          if [ "x$htaddr" != "x" ]; then
+              break
+          fi
+          ((count++))
+          sleep 5
+      done
+      if [ $count -ge $max_retries ]; then
+          echo "Could not get Schedd address"
+          return 1
+      else
+          echo "$htaddr"
+          return 0
+      fi
+    }
+    wait_condor
   register: htcondor_ipaddr
+
+- name: Get HTCondor IP Address
+  shell: |
+    condor_status -schedd -af MyAddress
+  register: htcondor_ipaddr
+
+- debug:
+    msg: "HTCONDOR_ADDR: {{ htcondor_ipaddr.stdout }}"
+
+- debug:
+    msg: "HTCONDOR_ADDR: {{ htcondor_ipaddr.stderr }}"
+
+- debug:
+    msg: "HTCONDOR_ADDR: {{ htcondor_ipaddr }}"
 
 - name: Update condor address in reana configuration
   replace:
-    path: /usr/local/reana/reana-cluster-vc3.yaml
-    regexp: '^(\s*)- HTCONDOR_ADDR: .*'
-    replace: "\1- HTCONDOR_ADDR: '{{ htcondor_ipaddr.stdout }}'"
+    path: "/usr/local/reana/reana-cluster-vc3.yaml"
+    regexp: '^(\s*)(- HTCONDOR_ADDR: )(.)(.*)(.)'
+    replace: '\1\2\3{{ htcondor_ipaddr.stdout }}\5'
   ignore_errors: yes
 
 - name: start reana-cluster
