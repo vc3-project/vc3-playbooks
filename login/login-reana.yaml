@@ -164,8 +164,10 @@
               echo "Reana did not succeed"
               return 1
           else
+              sleep 2
               reana-cluster env --include-admin-token > /etc/profile.d/reana.sh
               return 0
           fi
         }
         wait_reana
+

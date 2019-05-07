@@ -7,4 +7,5 @@
 
   tasks:
     - import_tasks: components/condor.yaml
+    - import_tasks: components/reana_env.yaml
 
