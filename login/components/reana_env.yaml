@@ -41,17 +41,38 @@
     path: "/usr/local/reana/reana-cluster-vc3.yaml"
     regexp: '^(\s*)(- HTCONDOR_ADDR: )(.)(.*)(.)'
     replace: '\1\2\3{{ htcondor_ipaddr.stdout }}\5'
-  register: config_update
+  register: configaddr_update
 
 - debug:
-    msg: "Template update: {{ config_update }}"
+    msg: "Template update: {{ configaddr_update }}"
+
+- name: Get VC3 request owner userid
+  shell: "id -u {{ request_owner }}"
+  register: vc3id
+
+- debug:
+    msg: "VC3 Owner id: {{ vc3id }}"
+
+- name: Update VC3id in reana configuration
+  replace:
+    path: "/usr/local/reana/reana-cluster-vc3.yaml"
+    regexp: '^(\s*)(- VC3USERID: )(.)(.*)(.)'
+    replace: '\1- VC3USERID: "{{ vc3id.stdout }}"'
+  when: vc3id.changed
+  register: configid_update
+
+- debug:
+    msg: "Template update: {{ configid_update }}"
 
 - name: start reana-cluster
   shell: |
     source /etc/profile.d/kubernetes.sh
     source /usr/local/reana/bin/activate
     reana-cluster -f /usr/local/reana/reana-cluster-vc3.yaml init
-  when: config_update.changed
+  register: addr
+
+- debug:
+    msg: "Reana config: {{ addr }}"
 
 - name: Setup reana-cluster environment
   shell: |
