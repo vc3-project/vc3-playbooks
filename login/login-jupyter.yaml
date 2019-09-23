@@ -31,16 +31,11 @@
         dest: /usr/bin/python3
         state: link
     
-    - name: Install pip
-      yum:
-        name: python36u-pip
-
     - name: Upgrade pip
       pip:
         name: pip
         extra_args: --upgrade
         executable: pip3.6
-
 
     - name: Install node
       yum:
