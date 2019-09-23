@@ -4,7 +4,8 @@ Description=Jupyter Notebook
 [Service]
 Type=simple
 PIDFile=/run/jupyterhub.pid
-ExecStart=/bin/bash -c '/usr/bin/jupyterhub -f "/etc/.jupyterhub/jupyterhub_config.py"'
+Environment=PATH=/bin:/usr/bin:/usr/local/bin
+ExecStart=/bin/bash -c '/usr/local/bin/jupyterhub -f "/etc/.jupyterhub/jupyterhub_config.py"'
 User=root
 WorkingDirectory=/home/
 Restart=always
