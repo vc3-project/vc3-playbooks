@@ -17,9 +17,6 @@
     owner: root
     group: root
     mode: 0644
-    
-- name: make vc3 dir
-  command: mkdir -p /opt/vc3/root
 
 - name: create minio launch script
   copy:
