@@ -1,0 +1,8 @@
+---
+- name: Copy standard_path.sh to /etc/profile.d
+  copy:
+    src: ../config/standard_path.sh
+    dest:  /etc/profile.d/
+    owner: root
+    group: root
+    mode: 0644

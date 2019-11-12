@@ -1,31 +1,24 @@
----
-- hosts: all
-  remote_user: "{{ setup_user_name }}"
-  become: yes
-  become_user: root
-
-  vars:
+- set_fact:
     cvmfs_quota_limit: 20000
+
+- set_fact:
     cvmfs_http_proxy: 'http://squid.grid.uchicago.edu:3128'
 
-  tasks:
-    - name: Add auto.cvmfs
-      lineinfile:
-        path: /etc/auto.master
-        regexp: '^\/cvmfs'
-        line: '/cvmfs /etc/auto.cvmfs'
-      notify: restart autofs
+- name: Add auto.cvmfs
+  lineinfile:
+    path: /etc/auto.master
+    regexp: '^\/cvmfs'
+    line: '/cvmfs /etc/auto.cvmfs'
 
-    - name: Copy CVMFS config
-      template:
-        src: ../templates/cvmfs_default_local.j2
-        dest: /etc/cvmfs/default.local
-        owner: root
-        group: root
-        mode: 0644
-    - meta: flush_handlers
+- name: Copy CVMFS config
+  template:
+    src: ../templates/cvmfs_default_local.j2
+    dest: /etc/cvmfs/default.local
+    owner: root
+    group: root
+    mode: 0644
 
-  handlers:
-  - name: restart autofs
-    service: name=autofs state=restarted
+- name: restart autofs
+  service: name=autofs state=restarted
+
 
