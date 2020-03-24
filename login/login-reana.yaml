@@ -119,22 +119,22 @@
 #        state: abscent
 
 #    - name: Install reana-cluster
-#      command: /opt/vc3/home/.local/bin/pip2 install git+https://github.com/khurtado/reana-cluster@job_manager
+#      command: /opt/vc3/home/.local/bin/pip2 install git+https://github.com/khurtado/reana-cluster@vc3v2p2
 
     - name: Install reana-cluster
       pip:
-        name: git+https://github.com/khurtado/reana-cluster@job_manager
+        name: git+https://github.com/khurtado/reana-cluster@vc3v2p2
         virtualenv: "/usr/local/reana"
         virtualenv_command: virtualenv-2.7
 
     - name: Install reana-client
       pip:
-        name: git+https://github.com/khurtado/reana-client@job_manager
+        name: git+https://github.com/khurtado/reana-client@vc3v2p2
         virtualenv: "/usr/local/reana"
         virtualenv_command: virtualenv-2.7
 
     - name: Get VC3 reana cluster configuration
       get_url:
-        url: https://raw.githubusercontent.com/khurtado/reana-cluster/job_manager/reana_cluster/configurations/reana-cluster-vc3.yaml
+        url: https://raw.githubusercontent.com/khurtado/reana-cluster/vc3v2p2/reana_cluster/configurations/reana-cluster-vc3.yaml
         dest: /usr/local/reana/reana-cluster-vc3.yaml
         mode: 0644
