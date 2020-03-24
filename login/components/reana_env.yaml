@@ -68,7 +68,7 @@
   shell: |
     source /etc/profile.d/kubernetes.sh
     source /usr/local/reana/bin/activate
-    reana-cluster -f /usr/local/reana/reana-cluster-vc3.yaml init
+    reana-cluster -f /usr/local/reana/reana-cluster-vc3.yaml init --skip-create-traefik
   register: addr
 
 - debug:
