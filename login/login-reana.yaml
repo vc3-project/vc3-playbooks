@@ -17,14 +17,31 @@
         name: https://centos7.iuscommunity.org/ius-release.rpm
         state: present
 
-    - name: Install python2.7
+    - name: Install python3.6
       yum:
-        name: python
+        name: python36
         state: present
+
+    - name: Install python3.6 devel
+      yum:
+        name: python36-devel
+        state: present
+
+    - name: Link python3.6 -> python3
+      file:
+        src: /usr/bin/python3.6
+        dest: /usr/bin/python3
+        state: link
+    
+    - name: Upgrade pip
+      pip:
+        name: pip
+        extra_args: --upgrade
+        executable: pip3.6
 
     - name: Install virtualenv
       yum:
-        name: python-virtualenv
+        name: python36-virtualenv
         state: present
 
     - name: Upgrade virtualenv pip
@@ -32,12 +49,14 @@
         virtualenv: "/usr/local/reana"
         name: pip
         extra_args: --upgrade
+        executable: pip3.6
 
     - name: Upgrade virtualenv setuptools
       pip:
         virtualenv: "/usr/local/reana"
         name: setuptools
         extra_args: --upgrade
+        virtualenv_command: virtualenv-3.6
 
     - name: Add host IP into /etc/hosts
       command: echo $(curl https://api.ipify.org) $(hostname) >> /etc/hosts
@@ -119,19 +138,19 @@
 #        state: abscent
 
 #    - name: Install reana-cluster
-#      command: /opt/vc3/home/.local/bin/pip2 install git+https://github.com/khurtado/reana-cluster@vc3v2p2
+#      command: /opt/vc3/home/.local/bin/pip3 install git+https://github.com/khurtado/reana-cluster@vc3v2p2
 
     - name: Install reana-cluster
       pip:
         name: git+https://github.com/khurtado/reana-cluster@vc3v2p2
         virtualenv: "/usr/local/reana"
-        virtualenv_command: virtualenv-2.7
+        virtualenv_command: virtualenv-3.6
 
     - name: Install reana-client
       pip:
         name: git+https://github.com/khurtado/reana-client@vc3v2p2
         virtualenv: "/usr/local/reana"
-        virtualenv_command: virtualenv-2.7
+        virtualenv_command: virtualenv-3.6
 
     - name: Get VC3 reana cluster configuration
       get_url:
