@@ -49,7 +49,6 @@
         virtualenv: "/usr/local/reana"
         name: pip
         extra_args: --upgrade
-        executable: pip3.6
 
     - name: Upgrade virtualenv setuptools
       pip:
