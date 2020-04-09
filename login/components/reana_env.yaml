@@ -39,7 +39,7 @@
 - name: Update condor address in reana configuration
   replace:
     path: "/usr/local/reana/reana-cluster-vc3.yaml"
-    regexp: '^(\s*)(- HTCONDOR_ADDR: )(.)(.*)(.)'
+    regexp: '^(\s*)(- REANA_JOB_CONTROLLER_VC3_HTCONDOR_ADDR: )(.)(.*)(.)'
     replace: '\1\2\3{{ htcondor_ipaddr.stdout }}\5'
   register: configaddr_update
 
