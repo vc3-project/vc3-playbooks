@@ -53,6 +53,13 @@
 - debug:
     msg: "VC3 Owner id: {{ vc3id }}"
 
+- name: Get VC3 request owner gid
+  shell: "id -u {{ request_owner }}"
+  register: vc3gid
+
+- debug:
+    msg: "VC3 Owner gid: {{ vc3gid }}"
+
 - name: Update VC3id in reana configuration
   replace:
     path: "/usr/local/reana/reana-cluster-vc3.yaml"
@@ -63,6 +70,38 @@
 
 - debug:
     msg: "Template update: {{ configid_update }}"
+
+- name: Update work userid in reana configuration
+  replace:
+    path: "/usr/local/reana/reana-cluster-vc3.yaml"
+    regexp: '^(\s*)(- WORKFLOW_RUNTIME_USER_UID: )(.)(.*)(.)'
+    replace: '\1- WORKFLOW_RUNTIME_USER_UID: "{{ vc3id.stdout }}"'
+  when: vc3id.changed
+  register: configwid_update
+
+- debug:
+    msg: "Template update: {{ configwid_update }}"
+
+- name: Update work user gid in reana configuration
+  replace:
+    path: "/usr/local/reana/reana-cluster-vc3.yaml"
+    regexp: '^(\s*)(- WORKFLOW_RUNTIME_USER_GID: )(.)(.*)(.)'
+    replace: '\1- WORKFLOW_RUNTIME_USER_GID: "{{ vc3gid.stdout }}"'
+  when: vc3gid.changed
+  register: configwgid_update
+
+- debug:
+    msg: "Template update: {{ configwgid_update }}"
+
+- name: Update work username in reana configuration
+  replace:
+    path: "/usr/local/reana/reana-cluster-vc3.yaml"
+    regexp: '^(\s*)(- WORKFLOW_RUNTIME_USER_NAME: )(.)(.*)(.)'
+    replace: '\1- WORKFLOW_RUNTIME_USER_NAME: "{{ request_owner }}"'
+  register: configuser_update
+
+- debug:
+    msg: "Template update: {{ configuser_update }}"
 
 - name: start reana-cluster
   shell: |
