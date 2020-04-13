@@ -54,7 +54,7 @@
     msg: "VC3 Owner id: {{ vc3id }}"
 
 - name: Get VC3 request owner gid
-  shell: "id -u {{ request_owner }}"
+  shell: "id -g {{ request_owner }}"
   register: vc3gid
 
 - debug:
